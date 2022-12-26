@@ -1,9 +1,11 @@
+from .util import fact_make_output_path
 
 class FactFile:
     def __init__(self, path):
         self.path = path
         self.text = ""
         self.modules = []
+        self.macros = []
 
 def facts_find_files(facts):
     files = {}
@@ -18,16 +20,32 @@ def facts_find_files(facts):
 
     return files
 
-def facts_dump_files(output_path, fact_files):
+def dump_file_facts(output, fact_file):
+    output.write(f"# File {fact_file.path}\n\n")
+    nr_modules = len(fact_file.modules)
+    nr_macros = len(fact_file.macros)
+    output.write(f"modules: {nr_modules} macros: {nr_macros}\n\n")
+    if nr_modules > 0:
+        output.write("Modules:\n\n")
+        for module in fact_file.modules:
+            output.write(f"- `{module}`\n")
+        output.write("\n")
+    if nr_macros > 0:
+        output.write("Macros:\n\n")
+        for macro in fact_file.macros:
+            output.write(f"- `{macro}`\n")
+        output.write("\n")
+
+
+def facts_dump_files(output_path, fact_files, strip_path):
     for fact_file in fact_files.values():
-        with open(output_path / (fact_file.path + '.md'), 'w', encoding="utf-8") as file:
+        output_fact_file_path = fact_make_output_path(fact_file.path, strip_path, output_path / 'sources', '.md')
+        with open(output_fact_file_path, 'w', encoding="utf-8") as file:
             file.write("```verilog\n")
             file.write(fact_file.text)
             file.write("\n```\n")
             file.close()
-        with open(output_path / (fact_file.path + '.facts.md'), 'w', encoding="utf-8") as file:
-            file.write("Modules:\n\n")
-            for module in fact_file.modules:
-                file.write(f"- {module}\n")
-            file.write("\n")
+        output_fact_file_path = fact_make_output_path(fact_file.path, strip_path, output_path / 'files', '.md')
+        with open(output_fact_file_path, 'w', encoding="utf-8") as file:
+            dump_file_facts(file, fact_file)
             file.close()

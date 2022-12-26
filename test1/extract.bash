@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+this_script="$(realpath "${BASH_SOURCE[0]}")"
+script_dir="$(dirname "$this_script")"
 
 EXTRACTOR=verible-verilog-kythe-extractor
 
@@ -23,5 +26,7 @@ fi
 
 OUTPUT_DIR=$1
 
-$EXTRACTOR --print_kythe_facts json --file_list_path project.flist --verilog_project_name prj-test1 > $OUTPUT_DIR/facts.json
-$EXTRACTOR --print_kythe_facts json_debug --file_list_path project.flist --verilog_project_name prj-test1 > $OUTPUT_DIR/facts.debug.json
+LIST="--file_list_path $script_dir/project.flist --file_list_root $script_dir"
+
+$EXTRACTOR --print_kythe_facts json $LIST  --verilog_project_name prj-test1 > $OUTPUT_DIR/facts.json
+$EXTRACTOR --print_kythe_facts json_debug $LIST --verilog_project_name prj-test1 > $OUTPUT_DIR/facts.debug.json
