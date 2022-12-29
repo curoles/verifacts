@@ -38,17 +38,43 @@ def dump_file_facts(output, fact_file, src_file, strip_path):
             output.write(f"- `{macro}`\n")
         output.write("\n")
 
+def dump_src_file(output_path, fact_file):
+    with open(output_path, 'w', encoding="utf-8") as file:
+        file.write("```verilog\n")
+        file.write(fact_file.text)
+        file.write("\n```\n")
+        file.close()
+
+def dump_src_file_with_lines(output_path, fact_file):
+    with open(output_path, 'w', encoding="utf-8") as file:
+        line_nr = 0
+        for line in iter(fact_file.text.splitlines()):
+            file.write(f"``{line_nr: >3} | {line}`` ^line-{line_nr}\n\n")
+            line_nr += 1
+        file.close()
 
 def facts_dump_files(output_path, fact_files, strip_path):
+    list_files = []
     for fact_file in fact_files.values():
+        output_src_file_path = fact_make_output_path(fact_file.path, strip_path, output_path / 'linesrc', '.md')
+        dump_src_file_with_lines(output_src_file_path, fact_file)
+
         output_src_file_path = fact_make_output_path(fact_file.path, strip_path, output_path / 'sources', '.md')
-        with open(output_src_file_path, 'w', encoding="utf-8") as file:
-            file.write("```verilog\n")
-            file.write(fact_file.text)
-            file.write("\n```\n")
-            file.close()
+        dump_src_file(output_src_file_path, fact_file)
+
         output_fact_file_path = fact_make_output_path(fact_file.path, strip_path, output_path / 'files', '.md')
         src_file = facts_relpath(output_fact_file_path, output_src_file_path)
         with open(output_fact_file_path, 'w', encoding="utf-8") as file:
             dump_file_facts(file, fact_file, src_file, strip_path)
             file.close()
+
+        list_files.append([
+            facts_relpath(output_path / 'files', output_fact_file_path),
+            facts_relpath(output_path / 'files', output_src_file_path)])
+
+    list_files_path = output_path / 'files' / 'list.md'
+    with open(list_files_path, 'w', encoding="utf-8") as file:
+        file.write("# List of files\n\n")
+        for f in list_files:
+            file.write(f"- [{f[0]}]({f[0]}); [{f[1]}]({f[1]})\n")
+        file.close()

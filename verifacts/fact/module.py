@@ -36,6 +36,6 @@ def facts_dump_modules(output_path, fact_modules, strip_path):
     with open(list_modules_path, 'w', encoding="utf-8") as file:
         file.write("# List of modules\n\n")
         for m in list_modules:
-            link_path = facts_relpath(list_modules_path.parent, m[3])
-            file.write(f"- [{m[1]}]({link_path}) from {m[0]}\n")
+            link_path = facts_relpath(list_modules_path, m[3])
+            file.write(f"- [`{m[1]}`]({link_path}) from {m[0]}\n")
         file.close()

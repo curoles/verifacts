@@ -4,6 +4,7 @@ import argparse
 
 import verifacts.load.json
 import verifacts.fact.file
+import verifacts.fact.anchor
 import verifacts.fact.module
 import verifacts.fact.macro
 
@@ -35,6 +36,7 @@ def main(argv):
     ##    print(fact)
 
     fact_files = verifacts.fact.file.facts_find_files(facts)
+    fact_anchors = verifacts.fact.anchor.facts_find_anchors(facts)
     fact_modules = verifacts.fact.module.facts_find_modules(facts, fact_files)
     fact_macros = verifacts.fact.macro.facts_find_macros(facts, fact_files)
 
@@ -46,3 +48,10 @@ def main(argv):
 
     print(f"number of macros is {len(fact_macros)}")
     verifacts.fact.macro.facts_dump_macros(output_path, fact_macros, args.strip_path)
+
+    index_md = output_path / 'index.md'
+    with open(index_md, 'w', encoding="utf-8") as file:
+        file.write("# Index\n\n")
+        file.write("- [Files](files/list.md)\n")
+        file.write("- [Modules](modules/list.md)\n")
+        file.write("- [Macros](macros/list.md)\n")

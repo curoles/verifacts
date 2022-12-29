@@ -19,7 +19,7 @@ def fact_make_output_path(fact_path, strip_path, output_prefix, output_suffix):
     return path
 
 def facts_relpath(from_path, to_path):
-    return os.path.relpath(to_path, from_path)
+    return os.path.relpath(to_path, from_path.parent)
 
 def sig2path(sig, root):
     path_str = strip_root(sig, root)
