@@ -37,8 +37,8 @@ def main(argv):
 
     fact_files = verifacts.fact.file.facts_find_files(facts)
     fact_anchors = verifacts.fact.anchor.facts_find_anchors(facts)
-    fact_modules = verifacts.fact.module.facts_find_modules(facts, fact_files)
-    fact_macros = verifacts.fact.macro.facts_find_macros(facts, fact_files)
+    fact_modules = verifacts.fact.module.facts_find_modules(facts, fact_files, fact_anchors)
+    fact_macros = verifacts.fact.macro.facts_find_macros(facts, fact_files, fact_anchors)
 
     print(f"number of SystemVerilog files is {len(fact_files)}")
     verifacts.fact.file.facts_dump_files(output_path, fact_files, args.strip_path)
